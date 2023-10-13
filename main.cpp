@@ -21,7 +21,7 @@ void printParaInfo(GlobalConfig& configInfo) {
 }
 
 using namespace std;
-std::string inputGraphPath = "/raid/bear/bigdata/it2004.bin";
+std::string inputGraphPath = "/raid/bear/tmp/com_or.bin";
 
 int main() {
     omp_set_num_threads(THREADNUM);
