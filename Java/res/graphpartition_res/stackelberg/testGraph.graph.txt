@@ -1,0 +1,35 @@
+input graph: ../../input/testGraph.txt
+outputGraphPath: ../../res/graphpartition_res/stackelberg/testGraph.graph.txt
+vCount: 5
+eCount: 5
+averageDegree: 2.0
+partitionNum: 128
+alpha: 0.5
+beta: 1.0
+k: 32
+batchSize: 100
+partitionNum: 128
+threads: 8
+MaxClusterVolume: 0.078125
+---------------start-------------
+Start Time
+End CalculateDegree
+End Clustering
+ComputeHybridInfo time: 6 ms
+Clustering Core time: 7 ms
+Initial Clustering time: 4 ms
+Big clustersize:12
+Small clustersize:4
+End Game
+Cluster game time: 6 ms
+End Time
+Partition num:128
+Partition time: 30 ms
+Relative balance load:25.6
+Replicate factor: 2.0
+Memory cost: -1 MB
+Total game round:0
+Cluster game time: 6 ms
+Cluster Time: 17 ms
+perform Step Time: 0 ms
+---------------end-------------
