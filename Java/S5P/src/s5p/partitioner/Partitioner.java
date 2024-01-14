@@ -21,6 +21,7 @@ public class Partitioner {
     private int[] partitionLoad;
     private int[] degree;
     private int[][] v2p;
+
     public Partitioner(StreamCluster streamCluster) {
         this.streamCluster = streamCluster;
         this.graph = streamCluster.getGraph();
@@ -37,18 +38,24 @@ public class Partitioner {
     private void processGraph(double maxLoad) {
         this.graph.readGraphFromFile();
         Edge edge;
+        //for e(u,v) ∈ E do
         while ((edge = this.graph.readStep()) != null) {
             int src = edge.getSrcVId();
             int dest = edge.getDestVId();
             if(degree[src] >= GlobalConfig.getTao() *  GlobalConfig.getAverageDegree() && degree[dest] >= GlobalConfig.getTao() * GlobalConfig.getAverageDegree()) {
+                //if e ∈ E(H) then
                 this.clusterPartition = this.clusterPartition_B;
                 int srcPartition = 0;
                 int destPartition = 0;
+
+                //Pu = C2P(Clu(u)) Clu(u) = V2CH(u). where Pu is srcPartition
                 if(clusterPartition.containsKey(streamCluster.getClusterId(src, "B")) ){
                     srcPartition = clusterPartition.get(streamCluster.getClusterId(src, "B"));
                 } else {
                     srcPartition = clusterPartition.get(streamCluster.getClusterId(src, "S"));
                 }
+
+                //Pv = C2P(Clu(v)) Clu(v) = V2CH(v). where Pv is destPartition
                 if(clusterPartition.containsKey(streamCluster.getClusterId(dest, "B"))) {
                     destPartition = clusterPartition.get(streamCluster.getClusterId(dest, "B"));
                 } else {
@@ -56,9 +63,12 @@ public class Partitioner {
                 }
                 int edgePartition = -1;
 
+                
                 if (partitionLoad[srcPartition] > maxLoad && partitionLoad[destPartition] > maxLoad) {
+                    //if Load(Pu) > L and Load(Pv) > L then Place e in a partition with available space
                     for (int i = 0; i < GlobalConfig.partitionNum; i++) {
                         if (partitionLoad[i] <= maxLoad) {
+                            //this partition is available
                             edgePartition = i;
                             srcPartition = i;
                             destPartition = i;
@@ -66,24 +76,32 @@ public class Partitioner {
                         }
                     }
                 } else if (partitionLoad[srcPartition] > partitionLoad[destPartition]) {
+                    //else if Load(Pu) > Load(Pv) then place e into Pv
                     edgePartition = destPartition;
                     srcPartition = destPartition;
                 } else {
+                    //else  place e into Pu
                     edgePartition = srcPartition;
                     destPartition = srcPartition;
                 }
+                
                 partitionLoad[edgePartition]++;
                 v2p[src][srcPartition] = 1;
                 v2p[dest][destPartition] = 1;
             } else {
+                //if e ∈ E(L) then
                 this.clusterPartition = this.clusterPartition_S;
                 int srcPartition = 0;
                 int destPartition = 0;
+
+                //Pu = C2P(Clu(u)) Clu(u) = V2CT(u). where Pu is srcPartition
                 if(clusterPartition.containsKey(streamCluster.getClusterId(src, "S"))) {
                     srcPartition = clusterPartition.get(streamCluster.getClusterId(src, "S"));
                 } else {
                     srcPartition = clusterPartition.get(streamCluster.getClusterId(src, "B"));
                 }
+
+                //Pv = C2P(Clu(v)) Clu(v) = V2CT(v). where Pv is destPartition
                 if(clusterPartition.containsKey(streamCluster.getClusterId(dest, "S"))) {
                     destPartition = clusterPartition.get(streamCluster.getClusterId(dest, "S"));
                 } else {
@@ -92,8 +110,10 @@ public class Partitioner {
                 int edgePartition = -1;
 
                 if (partitionLoad[srcPartition] > maxLoad && partitionLoad[destPartition] > maxLoad) {
+                    //if Load(Pu) > L and Load(Pv) > L then Place e in a partition with available space
                     for (int i = GlobalConfig.partitionNum - 1; i >= 0; i--) {
                         if (partitionLoad[i] <= maxLoad) {
+                            //this partition is available
                             edgePartition = i;
                             srcPartition = i;
                             destPartition = i;
@@ -101,9 +121,11 @@ public class Partitioner {
                         }
                     }
                 } else if (partitionLoad[srcPartition] > partitionLoad[destPartition]) {
+                    //else if Load(Pu) > Load(Pv) then place e into Pv
                     edgePartition = destPartition;
                     srcPartition = destPartition;
                 } else {
+                    //else place e into Pu
                     edgePartition = srcPartition;
                     destPartition = srcPartition;
                 }
@@ -142,6 +164,9 @@ public class Partitioner {
         int taskNum_B = (clusterSize_B + GlobalConfig.getBatchSize() - 1) / GlobalConfig.getBatchSize();
         int taskNum_S = (clusterSize_S + GlobalConfig.getBatchSize() - 1) / GlobalConfig.getBatchSize();
         int i = 0, j = 0;
+
+        //Streaming execution of mixed games, after executing head or tail, the remaining items still need to be executed
+        //The Bound of the streaming execution process is determined by the batchSize in the configuration (taskNum)
         for(; i < taskNum_B && j < taskNum_S; i++, j++){
             completionServiceCPG.submit(new ClusterGameTask("hybrid", streamCluster, i, j));
         }
@@ -152,6 +177,8 @@ public class Partitioner {
             completionServiceCPG.submit(new ClusterGameTask("S", j, streamCluster));
         }
 
+
+        //Combine the results of streaming games and output clusterPartition
         for(int p = 0; p < Math.max(taskNum_B, taskNum_S); p++){
             try{
                 Future<ClusterPackGame> result = completionServiceCPG.take();
