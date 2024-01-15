@@ -10,9 +10,13 @@ import java.io.*;
 import java.util.concurrent.*;
 
 public class Main {
+
     static Graph graphB = new OriginGraph(GlobalConfig.inputGraphPath);
     static Graph graphS = new OriginGraph(GlobalConfig.inputGraphPath);
+
+
     Graph graph = graphB;
+
     public static void main(String[] args) throws Exception {
         PrintStream printStream = new PrintStream(new FileOutputStream(GlobalConfig.outputResultPath, true));
         PrintStream console = System.out;
@@ -20,6 +24,8 @@ public class Main {
         printParaInfo();
         Runtime r = Runtime.getRuntime();
         r.gc();
+
+
         System.out.println("---------------start-------------");
         long beforeUsedMem = r.freeMemory();
         ExecutorService executor = Executors.newFixedThreadPool(4);
@@ -29,6 +35,8 @@ public class Main {
         long ClusterStartTime = System.currentTimeMillis();
         StreamCluster streamCluster = new StreamCluster(graphB, graphS);
         long InitialClusteringTime = System.currentTimeMillis();
+        
+        //Skewnes-aware Graph Clustering
         Future<Void> future_B = completionService.submit(() -> {
             streamCluster.startSteamClusterB();
             return null;
@@ -60,17 +68,25 @@ public class Main {
         System.out.println("Initial Clustering time: " + (InitialClusteringTime - ClusterStartTime) + " ms");
         System.out.println("Big clustersize:" + streamCluster.getClusterList_B().size());
         System.out.println("Small clustersize:" + streamCluster.getClusterList_S().size());
+
+
         Partitioner partitioner = new Partitioner(streamCluster);
         long gameStartTime = System.currentTimeMillis();
+
+        //start Stackelberg Game
         partitioner.startStackelbergGame();
         long gameEndTime = System.currentTimeMillis();
         System.out.println("End Game");
         System.out.println("Cluster game time: " + (gameEndTime - gameStartTime) + " ms");
         long performStepStartTime = System.currentTimeMillis();
+
+        //Postprocessing
         partitioner.performStep();
         long performStepEndTime= System.currentTimeMillis();
         long endTime = System.currentTimeMillis();
         System.out.println("End Time");
+
+        //Main program ends, processing part of the program data as a log
         double rf = partitioner.getReplicateFactor();
         double lb = partitioner.getLoadBalance();
         graphB.clear();

@@ -94,8 +94,8 @@ public class StreamCluster {
         this.maxVolume = maxVolume;
     }
 
-    private  List<Integer> clusterList_S;
-    private  List<Integer> clusterList_B;
+    private List<Integer> clusterList_S;
+    private List<Integer> clusterList_B;
     private double maxVolume;
     private int maxVolume_B;
     private int maxVolume_S;
@@ -106,13 +106,13 @@ public class StreamCluster {
     }
 
     public StreamCluster(Graph graphB, Graph graphS) {
-
         this.cluster_B = new int[GlobalConfig.vCount];
         this.cluster_S = new int[GlobalConfig.vCount];
         this.graphB = graphB;
         this.graphS = graphS;
         this.volume_B = new HashMap<>();
         this.volume_S = new HashMap<>();
+
         this.maxVolume = GlobalConfig.getMaxClusterVolume();
         this.innerAndCutEdge = new HashMap<>();
         this.clusterList_S = new ArrayList<>();
@@ -146,21 +146,34 @@ public class StreamCluster {
         while((edge = graphB.readStep()) != null) {
             int src = edge.getSrcVId();
             int dest = edge.getDestVId();
-            if(degree[src] >= GlobalConfig.getTao() *  GlobalConfig.getAverageDegree() && degree[dest] >= GlobalConfig.getTao() * GlobalConfig.getAverageDegree()) {
+
+            //When both the src and dst degrees of an edge are greater than the threshold,
+            //the node is placed in the ClusterB (Head) cluster
+            if(degree[src] >= GlobalConfig.getTao() *  GlobalConfig.getAverageDegree() &&
+             degree[dest] >= GlobalConfig.getTao() * GlobalConfig.getAverageDegree()) {
+
+                //if 𝑉2𝐶𝐻 [𝑢] 𝑜𝑟 𝑉2𝐶𝐻 [𝑣] 𝑖𝑠 𝑁𝑈𝐿𝐿 then, Assign a new ID
                 if (cluster_B[src] == 0) {
                     cluster_B[src] = clusterID_B++;
                 }
                 if (cluster_B[dest] == 0) {
                     cluster_B[dest] = clusterID_B++;
                 }
+
+                
+                //update d(u) and d(v)
                 this.degree_B[src]++;
                 this.degree_B[dest]++;
+
+                //Update 𝑣𝑜𝑙 by 𝑑 (𝑢) and 𝑑 (𝑣)
                 if (!volume_B.containsKey(cluster_B[src])) {
                     volume_B.put(cluster_B[src], 0);
                 }
                 if (!volume_B.containsKey(cluster_B[dest])) {
                     volume_B.put(cluster_B[dest], 0);
                 }
+
+                //when a vertex is added to a cluster, increasing the volume of the cluster by 1.
                 volume_B.put(cluster_B[src], volume_B.get(cluster_B[src]) + 1);
                 volume_B.put(cluster_B[dest], volume_B.get(cluster_B[dest]) + 1);
 
@@ -171,22 +184,42 @@ public class StreamCluster {
                     volume_B.put(cluster_B[src], this.degree_B[src]);
                 }
 
-                if(volume_B.get(cluster_B[dest]) >= maxVolume)
+                if(volume_B.get(cluster_B[dest]) >= maxVolume)  
                 {
                     volume_B.put(cluster_B[dest], volume_B.get(cluster_B[dest]) - this.degree_B[dest]);
                     cluster_B[dest] = clusterID_B++;
                     volume_B.put(cluster_B[dest], this.degree_B[dest]);
                 }
-                if (volume_B.get(cluster_B[src]) >= maxVolume || volume_B.get(cluster_B[dest]) >= maxVolume) continue;
 
+
+                if (volume_B.get(cluster_B[src]) >= maxVolume || volume_B.get(cluster_B[dest]) >= maxVolume) continue;
+                //if vol(V2CH[u]) and vol(V2CH[v]) < k then execute following (k is maxVolume)
+
+                //i <-- argmin(vol(V2CH[z]) - d(z)) (z ∈ {u,v})
+                //i.e. minVid <-- min(vol(cluster[u], vol(cluster[v])))
                 int minVid = (volume_B.get(cluster_B[src]) < volume_B.get(cluster_B[dest]) ? src : dest);
+
+                //j <-- z∈ {u, v}:z≠ i
+                //i.e. maxVid <-- (src or dest that not minVid)
                 int maxVid = (src == minVid ? dest: src);
+
+                
                 if ((volume_B.get(cluster_B[maxVid]) + this.degree_B[minVid]) <= maxVolume) {
+                    //if vol(V2CH[j])+ d(i)< k then
+
+                    //vol(V2CH[j]) <- vol(V2CH[j])+d(i)
                     volume_B.put(cluster_B[maxVid], volume_B.get(cluster_B[maxVid]) + this.degree_B[minVid]);
+                    //vol(V2CH[i]) <- vol(V2CH[i])-d(i)
                     volume_B.put(cluster_B[minVid], volume_B.get(cluster_B[minVid]) - this.degree_B[minVid]);
-                    if (volume_B.get(cluster_B[minVid]) == 0) volume_B.remove(cluster_B[minVid]);
-                        cluster_B[minVid] = cluster_B[maxVid];
+
+
+                    if (volume_B.get(cluster_B[minVid]) == 0) 
+                        volume_B.remove(cluster_B[minVid]);
+
+                    //V2CH[i] <- V2CH[j]
+                    cluster_B[minVid] = cluster_B[maxVid];
                 }
+
             }  
         }      
         clusterList_B = new ArrayList<>(volume_B.keySet());
@@ -202,21 +235,33 @@ public class StreamCluster {
         while((edge = graphS.readStep()) != null) {
             int src = edge.getSrcVId();
             int dest = edge.getDestVId();
-            if(!(degree[src] >= GlobalConfig.getTao() *  GlobalConfig.getAverageDegree() && degree[dest] >= GlobalConfig.getTao() * GlobalConfig.getAverageDegree()))  {
+
+            //When both the src and dst degrees of an edge are smaller than the threshold,
+            //the node is placed in the ClusterS (Tail) cluster
+            if(!(degree[src] >= GlobalConfig.getTao() *  GlobalConfig.getAverageDegree() &&
+             degree[dest] >= GlobalConfig.getTao() * GlobalConfig.getAverageDegree()))  {
+
+                //if 𝑉2𝐶T [𝑢] 𝑜𝑟 𝑉2𝐶T [𝑣] 𝑖𝑠 𝑁𝑈𝐿𝐿 then, Assign a new ID
                 if (cluster_S[src] == 0) {
                     cluster_S[src] = clusterID_S++;
                 }
                 if (cluster_S[dest] == 0) {
                     cluster_S[dest] = clusterID_S++;
                 }
+
+                //update d(u) and d(v)
                 this.degree_S[src]++;
                 this.degree_S[dest]++;
+                
+                //Update 𝑣𝑜𝑙 by 𝑑 (𝑢) and 𝑑 (𝑣)
                 if (!volume_S.containsKey(cluster_S[src])) {
                     volume_S.put(cluster_S[src], 0);
                 }
                 if (!volume_S.containsKey(cluster_S[dest])) {
                     volume_S.put(cluster_S[dest], 0);
                 }
+
+                //when a vertex is added to a cluster, increasing the volume of the cluster by 1.
                 volume_S.put(cluster_S[src], volume_S.get(cluster_S[src]) + 1);
                 volume_S.put(cluster_S[dest], volume_S.get(cluster_S[dest]) + 1);
 
@@ -234,14 +279,27 @@ public class StreamCluster {
                     volume_S.put(cluster_S[dest], this.degree_S[dest]);
                 }
                 if (volume_S.get(cluster_S[src]) >= maxVolume || volume_S.get(cluster_S[dest]) >= maxVolume) continue;
+                //if vol(V2CT[u]) and vol(V2CT[v]) < k then execute following (k is maxVolume)
 
+                //i <-- argmin(vol(V2CH[z]) - d(z)) (z ∈ {u,v})
+                //i.e. minVid <-- min(vol(cluster[u], vol(cluster[v])))
                 int minVid = (volume_S.get(cluster_S[src]) < volume_S.get(cluster_S[dest]) ? src : dest);
+                
+                //j <-- z∈ {u, v}:z≠ i
+                //i.e. maxVid <-- (src or dest that not minVid)
                 int maxVid = (src == minVid ? dest : src);
 
                 if ((volume_S.get(cluster_S[maxVid]) + this.degree_S[minVid]) <= maxVolume) {
+                    //if vol(V2CT[j])+ d(i)< k then
+                    
+                    //vol(V2CT[j]) <- vol(V2CT[j])+d(i)
                     volume_S.put(cluster_S[maxVid], volume_S.get(cluster_S[maxVid]) + this.degree_S[minVid]);
+                    
+                    //vol(V2CT[i]) <- vol(V2CT[i])-d(i)
                     volume_S.put(cluster_S[minVid], volume_S.get(cluster_S[minVid]) - this.degree_S[minVid]);
                     if (volume_S.get(cluster_S[minVid]) == 0) volume_S.remove(cluster_S[minVid]);
+                    
+                    //V2CT[i] <- V2CT[j]
                     cluster_S[minVid] = cluster_S[maxVid];
                 }
             }

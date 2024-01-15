@@ -34,8 +34,8 @@ public class ClusterPackGame  {
     private double beta_S = 0.0;
     private int roundCnt;
     private String graphType;
-
     private int gap = 0;
+
     public ClusterPackGame(StreamCluster streamCluster, List<Integer> clusterList, String graphType) {
         this.graphType = graphType;
         this.clusterPartition = new HashMap<>();
@@ -45,6 +45,7 @@ public class ClusterPackGame  {
         partitionLoad = new double[GlobalConfig.getPartitionNum()];
         clusterNeighbours = new HashMap<>();
     }
+
     public ClusterPackGame(StreamCluster streamCluster, List<Integer> clusterList_B, List<Integer> clusterList_S, String graphType) {
         this.streamCluster = streamCluster;
         this.clusterPartition_B = new HashMap<>();
@@ -54,6 +55,7 @@ public class ClusterPackGame  {
         cutCostValue_S = new HashMap<>();
         cutCostValue_hybrid_B = new HashMap<>();
         cutCostValue_hybrid_S = new HashMap<>();
+
         partitionLoad = new double[GlobalConfig.getPartitionNum()];
         this.clusterNeighbours_B = new HashMap<>();
         this.clusterNeighbours_S = new HashMap<>();
@@ -77,6 +79,8 @@ public class ClusterPackGame  {
         partitionLoad = new double[GlobalConfig.getPartitionNum()];
         clusterNeighbours = new HashMap<>();
     }
+
+    
     public ClusterPackGame(StreamCluster streamCluster_B, List<Integer> clusterList_B, StreamCluster streamCluster_S, List<Integer> clusterList_S) {
         this.clusterPartition = new HashMap<>();
         this.streamCluster_B = streamCluster_B;

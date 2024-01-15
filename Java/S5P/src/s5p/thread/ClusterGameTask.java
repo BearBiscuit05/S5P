@@ -35,8 +35,11 @@ public class ClusterGameTask implements Callable<ClusterPackGame> {
         int begin = batchSize * taskId_B;
         List<Integer> clusterList_B = streamCluster.getClusterList_B();
         List<Integer> clusterList_S = streamCluster.getClusterList_S();
+
+        //Streaming execute B and S，config Bound
         int end = Math.min(batchSize * (taskId_B + 1), clusterList_B.size());
         cluster_B = clusterList_B.subList(begin, end);
+
         begin = batchSize * taskId_S;
         end = Math.min(batchSize * (taskId_S + 1), clusterList_S.size());
         cluster_S = clusterList_S.subList(begin, end);
@@ -45,6 +48,7 @@ public class ClusterGameTask implements Callable<ClusterPackGame> {
 
     @Override
     public ClusterPackGame call() {
+        //Rewrite the call function, multithreading the initGame() operation of Stackeberg Game
         try {
             if(graphType.equals("hybrid")) {
                 ClusterPackGame clusterPackGame = new ClusterPackGame(streamCluster, cluster_B, cluster_S, graphType);
