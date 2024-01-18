@@ -47,8 +47,8 @@ void Partitioner::performStep() {
             v2p[src][srcPartition] = 1;
             v2p[dest][destPartition] = 1;
         } else {
-            int srcPartition = clusterPartition[streamCluster->cluster_S[src]];
-            int destPartition = clusterPartition[streamCluster->cluster_S[dest]];
+            int srcPartition = clusterPartition[streamCluster->cluster_S[src]+config.vCount];
+            int destPartition = clusterPartition[streamCluster->cluster_S[dest]+config.vCount];
             int edgePartition = -1;
             if (partitionLoad[srcPartition] > maxLoad && partitionLoad[destPartition] > maxLoad) {
                 for (int i = config.partitionNum - 1; i >= 0; i--) {

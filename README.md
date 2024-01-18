@@ -1,7 +1,7 @@
 # Skewness-aware Vertex-cut Partitioner (S5P)
 The implementation of S5P.
 <p align="center">
-  <img src="https://github.com/BearBiscuit05/S5P/blob/master/Supplements/overview_1.jpg" height="300">
+  <img src="./Supplements/overview_1.jpg" height="300">
 </p>
 
 ## Installation
