@@ -1,5 +1,8 @@
 # Skewness-aware Vertex-cut Partitioner (S5P)
 The implementation of S5P.
+<p align="center">
+  <img src="https://github.com/BearBiscuit05/S5P/blob/master/Supplements/overview_1.jpg" height="400">
+</p>
 ## Installation
 We tested the program (main) on Ubuntu 20.046 LTS.
 
@@ -45,3 +48,5 @@ Parameters:
 * AR: https://law.di.unimi.it/webdata/arabic-2005/
 * WB: https://law.di.unimi.it/webdata/webbase-2001/
 * Synthetic Graphs (R-MAT/TrillionG): https://github.com/chan150/TrillionG (SIGMOD'17)
+  
+
