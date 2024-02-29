@@ -65,7 +65,6 @@ public class ClusterGameTask implements Callable<ClusterPackGame> {
             } else {
                 System.out.println("graphType error");
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }

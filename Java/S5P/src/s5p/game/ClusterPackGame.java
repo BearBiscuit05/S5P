@@ -357,6 +357,7 @@ public class ClusterPackGame  {
         boolean finish_S = false;
         boolean isChangeB = true;
         boolean isChangeS = true;
+        
         while (true) {
             finish_B = true;
             finish_S = true;
@@ -397,6 +398,7 @@ public class ClusterPackGame  {
                     clusterPartition_S.put(clusterId, minPartition);
                 }
             }
+
             roundCnt++;
             if(finish_B && finish_S) {
                 break;

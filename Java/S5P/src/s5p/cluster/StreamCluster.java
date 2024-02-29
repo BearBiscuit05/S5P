@@ -165,7 +165,7 @@ public class StreamCluster {
                 this.degree_B[src]++;
                 this.degree_B[dest]++;
 
-                //Update 𝑣𝑜𝑙 by 𝑑 (𝑢) and 𝑑 (𝑣)
+                //Update 𝑣𝑜𝑙 by 𝑑(𝑢) and 𝑑(𝑣)
                 if (!volume_B.containsKey(cluster_B[src])) {
                     volume_B.put(cluster_B[src], 0);
                 }

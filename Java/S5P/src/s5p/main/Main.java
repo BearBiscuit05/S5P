@@ -27,6 +27,7 @@ public class Main {
 
 
         System.out.println("---------------start-------------");
+        //preprocessing
         long beforeUsedMem = r.freeMemory();
         ExecutorService executor = Executors.newFixedThreadPool(4);
         CompletionService<Void> completionService = new ExecutorCompletionService<>(executor);
@@ -41,7 +42,6 @@ public class Main {
             streamCluster.startSteamClusterB();
             return null;
         });
-
         Future<Void> future_S = completionService.submit(() -> {
             streamCluster.startSteamClusterS();
             return null;
@@ -95,6 +95,8 @@ public class Main {
         long afterUsedMem = r.freeMemory();
         long memoryUsed = (beforeUsedMem - afterUsedMem) >> 20;
         int roundCnt = partitioner.getGameRoundCnt();
+
+        
         System.out.println("Partition num:" + GlobalConfig.getPartitionNum());
         System.out.println("Partition time: " + (endTime - startTime) + " ms");
         System.out.println("Relative balance load:" + lb);

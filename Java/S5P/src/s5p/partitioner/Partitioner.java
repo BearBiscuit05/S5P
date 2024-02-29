@@ -38,12 +38,15 @@ public class Partitioner {
     private void processGraph(double maxLoad) {
         this.graph.readGraphFromFile();
         Edge edge;
-        //for e(u,v) ∈ E do
+
         while ((edge = this.graph.readStep()) != null) {
+            //for e(u,v) ∈ E do
+
             int src = edge.getSrcVId();
             int dest = edge.getDestVId();
             if(degree[src] >= GlobalConfig.getTao() *  GlobalConfig.getAverageDegree() && degree[dest] >= GlobalConfig.getTao() * GlobalConfig.getAverageDegree()) {
                 //if e ∈ E(H) then
+
                 this.clusterPartition = this.clusterPartition_B;
                 int srcPartition = 0;
                 int destPartition = 0;
@@ -66,9 +69,11 @@ public class Partitioner {
                 
                 if (partitionLoad[srcPartition] > maxLoad && partitionLoad[destPartition] > maxLoad) {
                     //if Load(Pu) > L and Load(Pv) > L then Place e in a partition with available space
+                    
                     for (int i = 0; i < GlobalConfig.partitionNum; i++) {
                         if (partitionLoad[i] <= maxLoad) {
                             //this partition is available
+
                             edgePartition = i;
                             srcPartition = i;
                             destPartition = i;
