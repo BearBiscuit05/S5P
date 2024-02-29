@@ -1,7 +1,7 @@
 # Skewness-aware Vertex-cut Partitioner (S5P)
 The implementation of S5P a skewness-aware vertex-cut partitioner. The work is published at ACM SIGMOD 2024.</br>
 Please cite the paper as follows:</br>
->Zezhong Ding, Yongan Xiang, Shangyou Wang, Xike Xie, S. Kevin Zhou. “Play like a Vertex: A Stackelberg Game Approach for Streaming Graph Partitioning”. In Proceedings of the 2024 International Conference on Management of Data (SIGMOD ‘24).
+>Zezhong Ding, Yongan Xiang, Shangyou Wang, Xike Xie, S. Kevin Zhou. “Play like a Vertex: A Stackelberg Game Approach for Streaming Graph Partitioning”. In Proceedings of the 2024 International Conference on Management of Data (SIGMOD ‘24). <https://arxiv.org/abs/2402.18304>
 
 
 <p align="center">
