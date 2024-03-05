@@ -40,7 +40,7 @@ Parameters:
 * `the number of partitions`: $k$
 * `Skewness coefficient`: $\tau$($\beta$)
 
-### Data sets used in the paper
+## Data sets used in the paper
 * OK: https://snap.stanford.edu/data/com-Orkut.html
 * TW: https://snap.stanford.edu/data/twitter-2010.html
 * FR: https://snap.stanford.edu/data/com-Friendster.html
@@ -53,5 +53,15 @@ Parameters:
 * AR: https://law.di.unimi.it/webdata/arabic-2005/
 * WB: https://law.di.unimi.it/webdata/webbase-2001/
 * Synthetic Graphs (R-MAT/TrillionG): https://github.com/chan150/TrillionG (SIGMOD'17)
-  
+
+## Citation
+
+```
+@article{ding2024play,
+  title={Play like a Vertex: A Stackelberg Game Approach for Streaming Graph Partitioning},
+  author={Ding, Zezhong and Xiang, Yongan and Wang, Shangyou and Xie, Xike and Zhou, S Kevin},
+  journal={arXiv preprint arXiv:2402.18304},
+  year={2024}
+}
+```
 
