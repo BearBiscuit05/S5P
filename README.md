@@ -37,8 +37,8 @@ Parameters:
 * `Vcount`: $|V|$
 * `Ecount`: $|E|$
 * `batchsize`: default: 1000
-* `k`: the number of partitions
-* `$tao$($\beta$)`: Skewness coefficient
+* `partitionNum`: the number of partitions
+* `$tao$($\beta$)` : Skewness coefficient
 
 ### Data sets used in the paper
 * OK: https://snap.stanford.edu/data/com-Orkut.html
