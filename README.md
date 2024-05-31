@@ -1,7 +1,7 @@
 # Skewness-aware Vertex-cut Partitioner (S5P)
 The implementation of S5P a skewness-aware vertex-cut partitioner. The work is published at ACM SIGMOD 2024.</br>
 Please cite the paper as follows:</br>
->Zezhong Ding, Yongan Xiang, Shangyou Wang, Xike Xie, S. Kevin Zhou. “Play like a Vertex: A Stackelberg Game Approach for Streaming Graph Partitioning”. In Proceedings of the 2024 International Conference on Management of Data (SIGMOD ‘24). <https://arxiv.org/abs/2402.18304>
+>Zezhong Ding, Yongan Xiang, Shangyou Wang, Xike Xie, S. Kevin Zhou. “Play like a Vertex: A Stackelberg Game Approach for Streaming Graph Partitioning”. In Proceedings of the 2024 International Conference on Management of Data (SIGMOD ‘24). <https://dl.acm.org/doi/10.1145/3654965>
 
 
 <p align="center">
@@ -57,11 +57,22 @@ Parameters:
 ## Citation
 
 ```
-@article{ding2024play,
-  title={Play like a Vertex: A Stackelberg Game Approach for Streaming Graph Partitioning},
-  author={Ding, Zezhong and Xiang, Yongan and Wang, Shangyou and Xie, Xike and Zhou, S Kevin},
-  journal={arXiv preprint arXiv:2402.18304},
-  year={2024}
+@article{10.1145/3654965,
+author = {Ding, Zezhong and Xiang, Yongan and Wang, Shangyou and Xie, Xike and Zhou, S. Kevin},
+title = {Play like a Vertex: A Stackelberg Game Approach for Streaming Graph Partitioning},
+year = {2024},
+issue_date = {June 2024},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+volume = {2},
+number = {3},
+url = {https://doi.org/10.1145/3654965},
+doi = {10.1145/3654965},
+journal = {Proc. ACM Manag. Data},
+month = {may},
+articleno = {162},
+numpages = {27},
+keywords = {distributed systems, graph partitioning, streaming partitioning}
 }
 ```
 
